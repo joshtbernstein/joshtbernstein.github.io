@@ -1,0 +1,62 @@
+<!-- https://giscus.app/ -->
+<script src="https://giscus.app/client.js"
+        data-repo="{{ site.comments.giscus.repo }}"
+        data-repo-id="{{ site.comments.giscus.repo-id }}"
+        data-category="{{ site.comments.giscus.category }}"
+        data-category-id="{{ site.comments.giscus.category-id }}"
+        data-mapping="{{ site.comments.giscus.mapping }}"
+        data-reactions-enabled="{{ site.comments.giscus.reactions-enabled }}"
+        data-emit-metadata="{{ site.comments.giscus.emit-metadata }}"
+        data-input-position="{{ site.comments.giscus.data-input-position }}"
+        data-theme="preferred_color_scheme"
+        data-lang="en"
+        crossorigin="anonymous"
+        async>
+</script>
+
+<script type="text/javascript">
+  $(function() {
+    const origin = "https://giscus.app";
+    const iframe = "iframe.giscus-frame";
+    const lightTheme = "light";
+    const darkTheme = "dark";
+    let initTheme = lightTheme;
+
+    if ($("html[mode=dark]").length > 0
+        || ($("html[mode]").length == 0
+            && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+      initTheme = darkTheme;
+    }
+    
+    addEventListener("message", (event) => {
+      let theme;
+
+      /* credit to <https://github.com/utterance/utterances/issues/170#issuecomment-594036347> */
+      if (event.data === '[iFrameResizerChild]Ready') {
+        /* page initial */
+        theme = initTheme;
+
+      } else if (event.source === window && event.data &&
+            event.data.direction === ModeToggle.ID) {
+        /* global theme mode changed */
+        const mode = event.data.message;
+        theme = (mode === ModeToggle.DARK_MODE ? darkTheme : lightTheme);
+
+      } else {
+        return;
+      }
+
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: theme
+          }
+        }
+      };
+
+      const giscus = document.querySelector(iframe).contentWindow;
+      giscus.postMessage(message, origin);
+    });
+
+  });
+</script>
